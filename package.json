@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/react-umami.git"
+    "url": "git+https://github.com/ledjay/react-umami.git"
   },
   "keywords": [
     "react",
@@ -35,14 +35,14 @@
     "typescript"
   ],
   "author": {
-    "name": "YOUR_NAME",
-    "url": "https://YOUR_WEBSITE.com"
+    "name": "ledjay",
+    "url": "https://github.com/ledjay"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/react-umami/issues"
+    "url": "https://github.com/ledjay/react-umami/issues"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/react-umami#readme",
+  "homepage": "https://github.com/ledjay/react-umami#readme",
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"

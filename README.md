@@ -123,9 +123,9 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ## Support
 
-- 📝 [Documentation](https://github.com/YOUR_USERNAME/react-umami#documentation)
-- 🐛 [Issue Tracker](https://github.com/YOUR_USERNAME/react-umami/issues)
-- 💬 [Discussions](https://github.com/YOUR_USERNAME/react-umami/discussions)
+- 📝 [Documentation](https://github.com/ledjay/react-umami#documentation)
+- 🐛 [Issue Tracker](https://github.com/ledjay/react-umami/issues)
+- 💬 [Discussions](https://github.com/ledjay/react-umami/discussions)
 
 ## License
 
@@ -134,5 +134,5 @@ MIT
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by <a href="https://YOUR_WEBSITE.com">YOUR_NAME</a></sub>
+  <sub>Built with ❤️ by <a href="https://github.com/ledjay">ledjay</a></sub>
 </div>
