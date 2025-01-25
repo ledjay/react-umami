@@ -1,19 +1,24 @@
 import typescript from "@rollup/plugin-typescript";
 
-export default {
-  input: "src/index.ts",
+// Use triple quotes to avoid string escaping issues
+const banner = `'use client';`;
+
+const createConfig = (input, output, useClientBanner = false) => ({
+  input,
   output: [
     {
-      file: "dist/index.js",
+      file: `dist/${output}.js`,
       format: "cjs",
       sourcemap: true,
       exports: "named",
+      ...(useClientBanner ? { banner } : {}),
     },
     {
-      file: "dist/index.esm.js",
+      file: `dist/${output}.esm.js`,
       format: "esm",
       sourcemap: true,
       exports: "named",
+      ...(useClientBanner ? { banner } : {}),
     },
   ],
   external: ["react"],
@@ -24,4 +29,9 @@ export default {
       declarationDir: "dist",
     }),
   ],
-};
+});
+
+export default [
+  createConfig("src/index.ts", "index"),
+  createConfig("src/client.tsx", "client", true),
+];

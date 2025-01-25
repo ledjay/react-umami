@@ -27,7 +27,7 @@ export class UmamiReact {
 
   private static log(message: string, data?: any) {
     if (this.debug) {
-      console.log(`[UmamiReact] ${message}`, data ? data : '');
+      console.log(`[UmamiReact] ${message}`, data ? data : "");
     }
   }
 
@@ -48,8 +48,13 @@ export class UmamiReact {
    * ```
    */
   static initialize(options: UmamiOptions): void {
+    // Always log this to verify the method is being called
+    console.log("[UmamiReact] initialize called with options:", options);
+
     if (typeof window === "undefined") {
-      this.log('Skipping initialization: window is undefined (SSR environment)');
+      console.log(
+        "[UmamiReact] Skipping initialization: window is undefined (SSR environment)"
+      );
       return;
     }
 
@@ -63,38 +68,49 @@ export class UmamiReact {
       return;
     }
 
-    this.debug = options.debug || false;
-    this.log('Initializing with options:', options);
+    // Set debug mode before any other operations
+    this.debug = Boolean(options.debug);
+    console.log("[UmamiReact] Debug mode:", this.debug);
+
+    this.log("Initializing with options:", options);
 
     const script = document.createElement("script");
     script.async = true;
     script.defer = true;
     script.setAttribute("data-website-id", options.websiteId);
-    script.src = "https://analytics.umami.is/script.js";
+    script.src = options.hostUrl || "https://analytics.umami.is/script.js";
 
     if (options.hostUrl) {
       script.setAttribute("data-host-url", options.hostUrl);
-      this.log('Setting custom host URL:', options.hostUrl);
+      this.log("Setting custom host URL:", options.hostUrl);
     }
 
     if (options.autoTrack === false) {
       script.setAttribute("data-auto-track", "false");
-      this.log('Auto-tracking disabled');
+      this.log("Auto-tracking disabled");
     }
 
     if (options.domains) {
       script.setAttribute("data-domains", options.domains.join(","));
-      this.log('Setting allowed domains:', options.domains);
+      this.log("Setting allowed domains:", options.domains);
     }
 
     if (options.tag) {
       script.setAttribute("data-tag", options.tag);
-      this.log('Setting tag:', options.tag);
+      this.log("Setting tag:", options.tag);
     }
 
     document.head.appendChild(script);
     this.initialized = true;
-    this.log('Script added to document head');
+    this.log("Script added to document head");
+
+    // Add script load event handlers
+    script.onload = () => {
+      this.log("Umami script loaded successfully");
+    };
+    script.onerror = (error) => {
+      console.error("[UmamiReact] Failed to load script:", error);
+    };
   }
 
   /**
@@ -115,7 +131,7 @@ export class UmamiReact {
    */
   static track(eventName: string, eventData?: Record<string, any>): void {
     if (typeof window === "undefined") {
-      this.log('Skipping track: window is undefined (SSR environment)');
+      this.log("Skipping track: window is undefined (SSR environment)");
       return;
     }
 
@@ -124,13 +140,13 @@ export class UmamiReact {
       return;
     }
 
-    this.log('Tracking event:', { name: eventName, data: eventData });
+    this.log("Tracking event:", { name: eventName, data: eventData });
 
     if (window.umami && typeof window.umami.track === "function") {
       window.umami.track(eventName, eventData);
-      this.log('Event tracked successfully');
+      this.log("Event tracked successfully");
     } else {
-      this.log('Failed to track event: window.umami.track is not available');
+      this.log("Failed to track event: window.umami.track is not available");
     }
   }
 }
