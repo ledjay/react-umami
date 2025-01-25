@@ -76,30 +76,36 @@ UmamiReact.initialize({
 
 ### Configuration Options
 
-The `initialize` method accepts the following options:
+| Option | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| `websiteId` | string | Yes | - | The website ID from your Umami instance |
+| `hostUrl` | string | No | - | Custom analytics server URL |
+| `autoTrack` | boolean | No | true | Enable/disable automatic page tracking |
+| `domains` | string[] | No | - | List of allowed domains |
+| `tag` | string | No | - | Tag to collect events under |
+| `debug` | boolean | No | false | Enable debug mode to log all tracking actions |
+
+### Debug Mode
+
+When debug mode is enabled, the package will log all tracking actions to the console. This is useful for development and troubleshooting. Example output:
 
 ```typescript
-interface UmamiOptions {
-  websiteId: string;        // Your Umami website ID (required)
-  hostUrl?: string;         // Custom analytics server URL
-  autoTrack?: boolean;      // Enable/disable automatic page tracking
-  domains?: string[];       // List of allowed domains
-  tag?: string;            // Tag to collect events under
-}
-```
-
-Example usage with all options:
-
-```typescript
-import UmamiReact from 'react-umami';
-
+// Initialize with debug mode
 UmamiReact.initialize({
   websiteId: 'your-website-id',
-  hostUrl: 'https://analytics.mywebsite.com',  // Optional: custom analytics server
-  autoTrack: false,                           // Optional: disable automatic tracking
-  domains: ['mywebsite.com', 'mywebsite2.com'], // Optional: limit tracking to specific domains
-  tag: 'production'                           // Optional: tag your events
+  debug: true
 });
+
+// Console output:
+[UmamiReact] Initializing with options: { websiteId: 'your-website-id', debug: true }
+[UmamiReact] Script added to document head
+
+// Track an event
+UmamiReact.track('button_click', { buttonName: 'submit' });
+
+// Console output:
+[UmamiReact] Tracking event: { name: 'button_click', data: { buttonName: 'submit' } }
+[UmamiReact] Event tracked successfully
 ```
 
 ### Event Tracking

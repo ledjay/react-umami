@@ -13,6 +13,8 @@ interface UmamiOptions {
   domains?: string[];
   /** Tag to collect events under. Events can be filtered in the dashboard by this tag */
   tag?: string;
+  /** Enable debug mode to log all tracking actions to the console */
+  debug?: boolean;
 }
 
 /**
@@ -21,6 +23,13 @@ interface UmamiOptions {
  */
 export class UmamiReact {
   private static initialized = false;
+  private static debug = false;
+
+  private static log(message: string, data?: any) {
+    if (this.debug) {
+      console.log(`[UmamiReact] ${message}`, data ? data : '');
+    }
+  }
 
   /**
    * Initialize the Umami tracking script with the provided configuration
@@ -33,12 +42,16 @@ export class UmamiReact {
    *   hostUrl: 'https://analytics.mywebsite.com',
    *   autoTrack: false,
    *   domains: ['mywebsite.com'],
-   *   tag: 'production'
+   *   tag: 'production',
+   *   debug: true
    * });
    * ```
    */
   static initialize(options: UmamiOptions): void {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      this.log('Skipping initialization: window is undefined (SSR environment)');
+      return;
+    }
 
     if (!options.websiteId) {
       console.error("UmamiReact: websiteId is required");
@@ -50,6 +63,9 @@ export class UmamiReact {
       return;
     }
 
+    this.debug = options.debug || false;
+    this.log('Initializing with options:', options);
+
     const script = document.createElement("script");
     script.async = true;
     script.defer = true;
@@ -58,22 +74,27 @@ export class UmamiReact {
 
     if (options.hostUrl) {
       script.setAttribute("data-host-url", options.hostUrl);
+      this.log('Setting custom host URL:', options.hostUrl);
     }
 
     if (options.autoTrack === false) {
       script.setAttribute("data-auto-track", "false");
+      this.log('Auto-tracking disabled');
     }
 
     if (options.domains) {
       script.setAttribute("data-domains", options.domains.join(","));
+      this.log('Setting allowed domains:', options.domains);
     }
 
     if (options.tag) {
       script.setAttribute("data-tag", options.tag);
+      this.log('Setting tag:', options.tag);
     }
 
     document.head.appendChild(script);
     this.initialized = true;
+    this.log('Script added to document head');
   }
 
   /**
@@ -93,15 +114,23 @@ export class UmamiReact {
    * ```
    */
   static track(eventName: string, eventData?: Record<string, any>): void {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      this.log('Skipping track: window is undefined (SSR environment)');
+      return;
+    }
 
     if (!this.initialized) {
       console.warn("UmamiReact: Please call initialize() first");
       return;
     }
 
+    this.log('Tracking event:', { name: eventName, data: eventData });
+
     if (window.umami && typeof window.umami.track === "function") {
       window.umami.track(eventName, eventData);
+      this.log('Event tracked successfully');
+    } else {
+      this.log('Failed to track event: window.umami.track is not available');
     }
   }
 }
