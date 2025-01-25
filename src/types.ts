@@ -1,13 +1,16 @@
 /**
- * React integration for Umami Analytics
- * @packageDocumentation
- */
-
-/**
  * Configuration options for the Umami tracker
  * @interface UmamiOptions
  */
-interface UmamiOptions {
+
+export interface TrackingObject {
+  /** Name of the event */
+  name: string;
+  /** Optional data to associate with the event */
+  data?: Record<string, any>;
+}
+
+export interface UmamiOptions {
   /** The website ID from your Umami instance */
   websiteId: string;
   /** Custom analytics server URL. By default, Umami will send data to wherever the script is located */
@@ -20,9 +23,15 @@ interface UmamiOptions {
   tag?: string;
   /** Enable debug mode to log all tracking actions to the console */
   debug?: boolean;
+  /** Default tracking object to be merged with all tracking calls */
+  defaultTracking?: TrackingObject;
 }
 
-export type { UmamiOptions } from "./types";
-export { UmamiReact } from "./umami-react";
-export { UmamiAnalytics } from "./client/analytics";
-export { useUmami } from "./client/hooks";
+declare global {
+  interface Window {
+    umami?: {
+      track: (eventName: string, eventData?: Record<string, any>) => void;
+    };
+    track: (eventName: string, eventData?: Record<string, any>) => void;
+  }
+}

@@ -1,64 +1,72 @@
-import UmamiReact from '../index';
+import { UmamiReact } from "../index";
 
-describe('UmamiReact', () => {
+describe("UmamiReact", () => {
   beforeEach(() => {
     // Clear all script tags before each test
-    document.head.innerHTML = '';
+    document.head.innerHTML = "";
     // Reset the initialized state
     (UmamiReact as any).initialized = false;
   });
 
-  it('should initialize with website ID', () => {
+  it("should initialize with website ID", () => {
     UmamiReact.initialize({
-      websiteId: 'test-id'
+      websiteId: "test-id",
     });
 
     const script = document.querySelector('script[data-website-id="test-id"]');
     expect(script).toBeTruthy();
-    expect(script?.getAttribute('src')).toBe('https://analytics.umami.is/script.js');
+    expect(script?.getAttribute("src")).toBe(
+      "https://analytics.umami.is/script.js"
+    );
   });
 
-  it('should prevent multiple initializations', () => {
-    const consoleSpy = jest.spyOn(console, 'warn');
-    
-    UmamiReact.initialize({ websiteId: 'test-id-1' });
-    UmamiReact.initialize({ websiteId: 'test-id-2' });
-    
-    const scripts = document.querySelectorAll('script[data-website-id]');
+  it("should prevent multiple initializations", () => {
+    const consoleSpy = jest.spyOn(console, "warn");
+
+    UmamiReact.initialize({ websiteId: "test-id-1" });
+    UmamiReact.initialize({ websiteId: "test-id-2" });
+
+    const scripts = document.querySelectorAll("script[data-website-id]");
     expect(scripts.length).toBe(1);
-    expect(consoleSpy).toHaveBeenCalledWith('UmamiReact: already initialized');
+    expect(consoleSpy).toHaveBeenCalledWith("UmamiReact: already initialized");
   });
 
-  it('should handle all configuration options', () => {
+  it("should handle all configuration options", () => {
     UmamiReact.initialize({
-      websiteId: 'test-id',
-      hostUrl: 'https://custom.analytics.com',
+      websiteId: "test-id",
+      hostUrl: "https://custom.analytics.com",
       autoTrack: false,
-      domains: ['example.com', 'example2.com'],
-      tag: 'test-tag'
+      domains: ["example.com", "example2.com"],
+      tag: "test-tag",
     });
 
     const script = document.querySelector('script[data-website-id="test-id"]');
-    expect(script?.getAttribute('data-host-url')).toBe('https://custom.analytics.com');
-    expect(script?.getAttribute('data-auto-track')).toBe('false');
-    expect(script?.getAttribute('data-domains')).toBe('example.com,example2.com');
-    expect(script?.getAttribute('data-tag')).toBe('test-tag');
+    expect(script?.getAttribute("data-host-url")).toBe(
+      "https://custom.analytics.com"
+    );
+    expect(script?.getAttribute("data-auto-track")).toBe("false");
+    expect(script?.getAttribute("data-domains")).toBe(
+      "example.com,example2.com"
+    );
+    expect(script?.getAttribute("data-tag")).toBe("test-tag");
   });
 
-  it('should track events when initialized', () => {
+  it("should track events when initialized", () => {
     const mockTrack = jest.fn();
     window.umami = { track: mockTrack };
 
-    UmamiReact.initialize({ websiteId: 'test-id' });
-    UmamiReact.track('test-event', { data: 'test' });
+    UmamiReact.initialize({ websiteId: "test-id" });
+    UmamiReact.track("test-event", { data: "test" });
 
-    expect(mockTrack).toHaveBeenCalledWith('test-event', { data: 'test' });
+    expect(mockTrack).toHaveBeenCalledWith("test-event", { data: "test" });
   });
 
-  it('should warn when tracking without initialization', () => {
-    const consoleSpy = jest.spyOn(console, 'warn');
-    UmamiReact.track('test-event');
-    
-    expect(consoleSpy).toHaveBeenCalledWith('UmamiReact: Please call initialize() first');
+  it("should warn when tracking without initialization", () => {
+    const consoleSpy = jest.spyOn(console, "warn");
+    UmamiReact.track("test-event");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "UmamiReact: Please call initialize() first"
+    );
   });
 });
