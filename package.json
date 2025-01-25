@@ -11,6 +11,11 @@
       "require": "./dist/index.js",
       "import": "./dist/index.esm.js",
       "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "require": "./dist/client.js",
+      "import": "./dist/client.esm.js",
+      "types": "./dist/client.d.ts"
     }
   },
   "scripts": {
