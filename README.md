@@ -9,13 +9,14 @@
 
 ## Features
 
-✨ **Simple Integration** - Easy to set up and use with any React application  
-🔒 **Privacy-Focused** - Built on Umami, respecting user privacy and GDPR compliant  
-🎯 **Flexible Tracking** - Track page views and custom events with ease  
-📦 **Lightweight** - Zero dependencies, minimal impact on your bundle size  
-🔧 **TypeScript Support** - Full TypeScript support with type definitions included  
-🌐 **Multi-Domain** - Support for tracking across multiple domains  
-🏷️ **Event Tagging** - Organize your analytics with custom event tags
+- 🔄 Easy integration with React and Next.js
+- 🎯 Automatic page tracking
+- 📊 Custom event tracking
+- 🛠 Configurable options
+- 📱 TypeScript support
+- 🔍 Debug mode for development
+- ⚡️ Server-side rendering support
+- 🎨 Framework-specific components
 
 ## Installation
 
@@ -27,54 +28,108 @@ yarn add react-umami
 pnpm add react-umami
 ```
 
-## Why react-umami?
+## Usage
 
-- **Privacy First**: Unlike Google Analytics, Umami is privacy-focused and GDPR compliant
-- **Simple Setup**: Get started with just a few lines of code
-- **Developer Experience**: Built with TypeScript for better development experience
-- **Performance**: Lightweight implementation with minimal bundle size impact
-- **Flexible**: Support for custom events, domains, and tracking options
+### Next.js App Router (v13+)
 
-## Examples
+```tsx
+// app/components/analytics.tsx
+'use client';
 
-### Basic Usage
-```typescript
-import UmamiReact from 'react-umami';
+import { UmamiProvider } from 'react-umami/client';
 
-// Initialize once in your app (e.g., in App.tsx)
-UmamiReact.initialize({
-  websiteId: 'your-website-id'
-});
+export function Analytics() {
+  return (
+    <UmamiProvider
+      websiteId="your-website-id"
+      hostUrl="https://analytics.example.com"
+      debug={true} // Optional: enable debug mode
+    />
+  );
+}
 
-// Track events anywhere in your components
-function SubscribeButton() {
-  const handleSubscribe = () => {
-    UmamiReact.track('Subscribe', {
-      plan: 'premium',
-      source: 'header'
-    });
-  };
+// app/layout.tsx
+import { Analytics } from './components/analytics';
 
-  return <button onClick={handleSubscribe}>Subscribe Now</button>;
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Analytics />
+        {children}
+      </body>
+    </html>
+  );
 }
 ```
 
-### With Custom Configuration
-```typescript
-import UmamiReact from 'react-umami';
+### Next.js Pages Router
 
-UmamiReact.initialize({
-  websiteId: 'your-website-id',
-  hostUrl: 'https://analytics.mywebsite.com',
-  autoTrack: false,
-  domains: ['mywebsite.com'],
-  tag: 'production'
-});
+```tsx
+// pages/_app.tsx
+'use client';
+
+import type { AppProps } from 'next/app';
+import { UmamiProvider } from 'react-umami/client';
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <UmamiProvider
+        websiteId="your-website-id"
+        hostUrl="https://analytics.example.com"
+        debug={true}
+      />
+      <Component {...pageProps} />
+    </>
+  );
+}
 ```
 
-## Documentation
+### React (Create React App, Vite, etc.)
 
-### Configuration Options
+```tsx
+// App.tsx
+import { UmamiReact } from 'react-umami';
+
+// Initialize in your app's entry point
+UmamiReact.initialize({
+  websiteId: 'your-website-id',
+  hostUrl: 'https://analytics.example.com',
+  debug: true // Optional: enable debug mode
+});
+
+function App() {
+  return (
+    <div>
+      <h1>My App</h1>
+    </div>
+  );
+}
+```
+
+### Tracking Custom Events
+
+```tsx
+import { UmamiReact } from 'react-umami';
+
+function MyComponent() {
+  const handleClick = () => {
+    UmamiReact.track('button_click', {
+      buttonName: 'submit',
+      page: 'home'
+    });
+  };
+
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+## Configuration Options
 
 | Option | Type | Required | Default | Description |
 |--------|------|----------|---------|-------------|
@@ -87,45 +142,54 @@ UmamiReact.initialize({
 
 ### Debug Mode
 
-When debug mode is enabled, the package will log all tracking actions to the console. This is useful for development and troubleshooting. Example output:
+When debug mode is enabled, the package will log all tracking actions to the console. This is useful for development and troubleshooting:
 
 ```typescript
-// Initialize with debug mode
-UmamiReact.initialize({
-  websiteId: 'your-website-id',
-  debug: true
-});
-
-// Console output:
-[UmamiReact] Initializing with options: { websiteId: 'your-website-id', debug: true }
+// Console output example:
+[UmamiReact] Initializing with options: { websiteId: 'xxx', debug: true }
+[UmamiReact] Setting custom host URL: https://analytics.example.com
 [UmamiReact] Script added to document head
-
-// Track an event
-UmamiReact.track('button_click', { buttonName: 'submit' });
-
-// Console output:
+[UmamiReact] Umami script loaded successfully
 [UmamiReact] Tracking event: { name: 'button_click', data: { buttonName: 'submit' } }
 [UmamiReact] Event tracked successfully
 ```
 
-### Event Tracking
+## Framework-Specific Components
 
-```typescript
-import UmamiReact from 'react-umami';
+### Next.js Components (`react-umami/client`)
 
-// Track a simple event
-UmamiReact.track('Button Click');
+For Next.js applications, we provide dedicated components that handle server-side rendering properly:
 
-// Track an event with custom data
-UmamiReact.track('Purchase', {
-  product: 'Premium Plan',
-  price: 99.99
-});
-```
+- `UmamiProvider`: A React component that initializes Umami
+- `useUmami`: A React hook for manual initialization
 
-## Contributing
+Both components are marked with `'use client'` and are safe to use in Next.js server components.
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+### React Components (`react-umami`)
+
+For traditional React applications:
+
+- `UmamiReact.initialize()`: Static method to initialize Umami
+- `UmamiReact.track()`: Static method to track custom events
+
+## Best Practices
+
+1. **Server-Side Rendering**
+   - In Next.js, always use components from `react-umami/client`
+   - Place the `UmamiProvider` in a client component
+
+2. **Event Tracking**
+   - Use descriptive event names
+   - Include relevant context in event data
+   - Avoid tracking sensitive information
+
+3. **Debug Mode**
+   - Enable debug mode during development
+   - Disable debug mode in production
+
+4. **Performance**
+   - The script is loaded asynchronously and won't block rendering
+   - Use the `domains` option to prevent tracking in development
 
 ## Support
 
