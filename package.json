@@ -2,6 +2,7 @@
   "name": "react-umami",
   "version": "0.1.0",
   "description": "React integration for Umami Analytics - A lightweight and privacy-focused alternative to Google Analytics",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
